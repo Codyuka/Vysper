@@ -1044,11 +1044,13 @@ class ApplicationController {
       const path = require("path");
       const fs = require("fs");
 
-      // Icon mapping for available icons in assests/icons folder
+      // Icon mapping for available icons in assets/icons folder
+      // Use path.join for proper path resolution in packaged apps
+      const baseDir = process.resourcesPath || __dirname;
       const iconPaths = {
-        terminal: "assests/icons/terminal.png",
-        activity: "assests/icons/activity.png",
-        settings: "assests/icons/settings.png",
+        terminal: path.join(baseDir, "assests/icons/terminal.png"),
+        activity: path.join(baseDir, "assests/icons/activity.png"),
+        settings: path.join(baseDir, "assests/icons/settings.png"),
       };
 
       // App name mapping for stealth mode
