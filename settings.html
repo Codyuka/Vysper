@@ -408,9 +408,186 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Local LLM Settings -->
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="fas fa-brain"></i>
+                    Local LLM Agent (LM Studio)
+                </div>
+                <div class="settings-section-content">
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">LM Studio Endpoint</div>
+                            <div class="settings-item-description">URL of your local LM Studio server</div>
+                        </div>
+                        <input type="text" class="input-field" id="localLLMEndpoint" placeholder="http://localhost:1234/v1">
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Model</div>
+                            <div class="settings-item-description">Leave empty for auto-detect</div>
+                        </div>
+                        <input type="text" class="input-field" id="localLLMModel" placeholder="Auto-detect">
+                    </div>
+                    <div class="settings-item">
+                        <div style="flex: 1;">
+                            <div class="settings-item-label">Status</div>
+                            <div class="settings-item-description" id="localLLMStatus">Checking...</div>
+                        </div>
+                        <button class="btn" id="checkLocalLLMBtn">
+                            <i class="fas fa-sync"></i>
+                            Check
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Browser LLM Settings -->
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="fas fa-globe"></i>
+                    Big LLM Platform (Free Online)
+                </div>
+                <div class="settings-section-content">
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Platform</div>
+                            <div class="settings-item-description">Choose free online LLM service</div>
+                        </div>
+                        <select class="input-field" id="browserLLMPlatform">
+                            <option value="huggingchat">HuggingChat (No login)</option>
+                            <option value="perplexity">Perplexity AI (Login required)</option>
+                            <option value="youcom">You.com (Search-based)</option>
+                            <option value="deepseek">DeepSeek Chat (Login required) ⭐</option>
+                            <option value="qwen">Qwen Chat (Login required) ⭐</option>
+                            <option value="custom">Custom URL</option>
+                        </select>
+                    </div>
+                    <div class="settings-item" id="customUrlItem" style="display: none;">
+                        <div>
+                            <div class="settings-item-label">Custom URL</div>
+                            <div class="settings-item-description">Your preferred LLM website</div>
+                        </div>
+                        <input type="text" class="input-field" id="browserLLMCustomUrl" placeholder="https://...">
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Headless Mode</div>
+                            <div class="settings-item-description">Run browser in background (faster but visible)</div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="browserLLMHeadless" checked>
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="settings-item">
+                        <div style="flex: 1;">
+                            <div class="settings-item-label">How it works</div>
+                            <div class="settings-item-description">
+                                1. Your voice → Whisper (local)<br>
+                                2. Question refined → Local LLM (Qwen2.5/Phi-3)<br>
+                                3. Sent to big model → Browser automation (DeepSeek/Qwen/HuggingChat)<br>
+                                4. Answer shown → Invisible window<br><br>
+                                <strong>⭐ Recommended:</strong> DeepSeek or Qwen Chat for best quality
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Whisper STT Settings -->
+            <div class="settings-section">
+                <div class="settings-section-title">
+                    <i class="fas fa-microphone-alt"></i>
+                    Whisper Speech-to-Text (Local)
+                </div>
+                <div class="settings-section-content">
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Model</div>
+                            <div class="settings-item-description">Larger = more accurate, slower</div>
+                        </div>
+                        <select class="input-field" id="whisperModel">
+                            <option value="tiny">Tiny (fastest, least accurate)</option>
+                            <option value="base">Base</option>
+                            <option value="small">Small (balanced)</option>
+                            <option value="medium">Medium</option>
+                            <option value="large-v3" selected>Large-v3 (best accuracy)</option>
+                        </select>
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Language</div>
+                            <div class="settings-item-description">Auto-detect recommended for mixed RU/EN</div>
+                        </div>
+                        <select class="input-field" id="whisperLanguage">
+                            <option value="auto" selected>Auto-detect</option>
+                            <option value="en">English only</option>
+                            <option value="ru">Russian only</option>
+                        </select>
+                    </div>
+                    <div class="settings-item">
+                        <div>
+                            <div class="settings-item-label">Device</div>
+                            <div class="settings-item-description">CPU or CUDA (NVIDIA GPU)</div>
+                        </div>
+                        <select class="input-field" id="whisperDevice">
+                            <option value="cpu" selected>CPU</option>
+                            <option value="cuda">CUDA (GPU)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <script src="./src/ui/settings-window.js"></script>
 </body>
-</html> 
+</html>     <style>
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .toggle-slider {
+            background-color: rgba(76, 175, 80, 0.8);
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+    </style>

@@ -1,0 +1,79 @@
+name: Build Windows EXE
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # Manual trigger
+
+# Optimize for private repo limits
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    
+    # Skip if too many concurrent builds (save minutes)
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1  # Shallow clone for speed
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: 'npm'
+
+    - name: Cache node_modules
+      id: cache-npm
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install dependencies
+      if: steps.cache-npm.outputs.cache-hit != 'true'
+      run: npm ci
+
+    - name: Install Puppeteer browser
+      run: npx puppeteer browsers install chrome
+
+    - name: Cache Puppeteer
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/puppeteer
+        key: ${{ runner.os }}-puppeteer-${{ hashFiles('package-lock.json') }}
+
+    - name: Build Electron app
+      run: npm run build
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: vysper-windows-exe
+        path: dist/*.exe
+        retention-days: 14  # Keep for 2 weeks (reduce storage)
+        if-no-files-found: error
+
+    - name: Create release (if main branch)
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: dist/*.exe
+        tag_name: v${{ github.run_number }}
+        name: Release v${{ github.run_number }}
+        draft: false
+        prerelease: false
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

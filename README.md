@@ -1,217 +1,186 @@
-<p align="center">
-  <img src="https://github.com/user-attachments/assets/186d5458-7e8b-406a-9adc-ce755256298c" 
-       alt="Group 14" 
-       width="300" 
-       style="padding: 10px; border-radius: 8px;"/>
-</p>
+# Vysper - Interview Assistant with Local STT & Browser LLM
 
-# Vysper
+[![Build Status](https://github.com/actions/workflows/status/badge.svg)](https://github.com/)
+[![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20macOS%20%7C%20Linux-blue)]()
+[![License](https://img.shields.io/badge/license-MIT-green)]()
 
-**Professional Interview Assistant with Invisible Screen Overlay**
+Professional interview assistant that provides real-time AI-powered responses during technical interviews. **Now with 100% free local speech-to-text and browser-based LLM automation - no API costs!**
 
-An AI-powered desktop tool that helps you excel in technical and professional interviews by providing intelligent, real-time assistance while remaining completely invisible to screen sharing and recording software.
+## 🌟 Key Features
 
-### Demo
-https://github.com/user-attachments/assets/c5616482-3652-4686-b87b-e04d06572d2f
-
-## Perfect for Interviews
-**Completely Stealth** - Invisible to Zoom, Teams, Meet, and all screen sharing tools
-**Real-time AI Assistance** - Instant help with coding problems, system design, and interview questions
-**Professional Skills** - Specialized modes for different interview types
-
-### Supported Interview Skills
-- **DSA (Data Structures & Algorithms)** - Complete solutions with complexity analysis
-- **System Design** - Architecture patterns and scalability approaches  
-- **Programming** - Multi-language coding assistance and best practices
-- **Behavioral** - STAR method responses and professional scenarios
-- **Sales** - Frameworks, objection handling, and closing techniques
-- **Negotiation** - Strategic approaches and persuasion tactics
-- **Presentation** - Structure, delivery tips, and visual design
-- **DevOps** - Infrastructure, CI/CD, and deployment strategies
-- **Data Science** - Analytics, ML approaches, and statistical methods
+- **🎤 Local Speech Recognition** - Faster-Whisper with automatic RU/EN language detection
+- **🧠 Two-Tier LLM Architecture**:
+  - Small local model (Qwen2.5-7B via LM Studio) for fast question processing
+  - Big free online model (HuggingChat/Perplexity) for high-quality answers
+- **🌐 Browser Automation** - Puppeteer-based interaction with free LLM websites
+- **👻 Invisible Display** - Undetectable overlay window for answer display
+- **💰 Zero Cost** - No API keys required, completely free to use
 
 ## 🚀 Quick Start
 
-### Installation
+### 1. Install Dependencies
+
 ```bash
-git clone <repository-url>
-cd Vysper
-brew install tesseract
-brew install sox
 npm install
+pip install faster-whisper sounddevice webrtcvad numpy
+npx puppeteer browsers install chrome
+```
+
+### 2. Setup LM Studio
+
+1. Download from https://lmstudio.ai/
+2. Install **Qwen2.5-7B-Instruct** model
+3. Start Local Server on `http://localhost:1234/v1`
+
+### 3. Configure Big LLM Platform
+
+1. Open Settings (`Cmd+,`)
+2. Select **HuggingChat** (no login required) or **Perplexity** (better quality)
+3. Save settings
+
+### 4. Run
+
+```bash
 npm start
 ```
 
-### Build Distributable App
+Press `Alt+R` to start voice recording and ask your first question!
 
-#### Step-by-Step Build Process
-1. **Clone and Setup** (first time only):
-   ```bash
-   git clone <repository-url>
-   cd Vysper
-   npm install
-   ```
+## 📖 Documentation
 
-2. **Create Your Build**:
-   ```bash
-   # For your current platform (recommended)
-   npm run build
-   
-   # Or specific platforms
-   npm run build:mac      # macOS (.dmg + .zip)
-   npm run build:win      # Windows (.exe installer + portable)
-   npm run build:linux    # Linux (.AppImage + .deb)
-   npm run build:all      # All platforms
-   ```
+- **[QUICK_START.md](./QUICK_START.md)** - Russian quick start guide
+- **[RU_SETUP_GUIDE.md](./RU_SETUP_GUIDE.md)** - Detailed Russian setup guide  
+- **[SETUP_LOCAL_LLM.md](./SETUP_LOCAL_LLM.md)** - English technical setup guide
 
-3. **Find Your App**: Built files appear in `dist/` folder
+## ⚙️ Architecture
 
-#### Build Commands Reference
-```bash
-# Basic builds
-npm run build          # Current platform
-npm run build:mac      # macOS (.dmg + .zip)
-npm run build:win      # Windows (.exe installer + portable)
-npm run build:linux    # Linux (.AppImage + .deb)
-npm run build:all      # All platforms
-
-# Development & testing
-npm run pack           # Quick build for testing (no compression)
-npm run clean          # Clean dist/ folder
-npm run rebuild        # Clean + build current platform
-npm run release        # Clean + build all platforms
+```
+Voice Input
+    ↓
+[Whisper Service] → Local STT (Russian/English auto-detect)
+    ↓
+[Local LLM Agent] → Process & refine question (LM Studio, ~2 sec)
+    ↓
+[Browser LLM Service] → Send to big free LLM (HuggingFace/Perplexity)
+    ↓
+[Response Formatter] → Format for quick reading
+    ↓
+[Invisible Display] → Show on undetectable overlay window
 ```
 
-**Built apps will be in the `dist/` folder:**
-- **macOS**: `Vysper-1.0.0.dmg` (installer) or `Vysper-1.0.0-mac.zip` (portable)
-- **Windows**: `Vysper Setup 1.0.0.exe` (installer) or `Vysper 1.0.0.exe` (portable)
-- **Linux**: `Vysper-1.0.0.AppImage` (portable) or `Vysper_1.0.0_amd64.deb` (installer)
+## 🎯 Recommended Models
 
-### Installing Built Apps
-- **macOS**: Double-click `.dmg` file → Drag to Applications folder
-- **Windows**: Run `.exe` installer or double-click portable version
-- **Linux**: Make `.AppImage` executable (`chmod +x`) and run, or install `.deb` with `dpkg`
+### Local LLM (LM Studio)
 
-**Clean Build Process:**
+| Model | Size | Speed | Russian | Best For |
+|-------|------|-------|---------|----------|
+| **Qwen2.5-7B-Instruct** | 7B | ⚡⚡ | ⭐⭐⭐⭐⭐ | **Best for RU/EN mixed** |
+| Qwen2.5-3B-Instruct | 3B | ⚡⚡⚡ | ⭐⭐⭐⭐ | Faster, slightly worse |
+| Phi-3-mini-4k-instruct | 3.8B | ⚡⚡⚡ | ⭐⭐ | Fastest |
+
+### Whisper STT
+
+| Model | Accuracy | Speed | Recommendation |
+|-------|----------|-------|----------------|
+| **large-v3** | ⭐⭐⭐⭐⭐⭐ | 🐌🐌 | **Best accuracy** |
+| small | ⭐⭐⭐⭐ | ⚡ | Good balance |
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Alt+R` | Toggle voice recording |
+| `Cmd+Shift+S` | Screenshot + AI Analysis |
+| `Cmd+Shift+C` | Open chat window |
+| `Cmd+Shift+\` | Clear session memory |
+| `Cmd+,` | Open settings |
+
+## 🆚 Comparison
+
+| Solution | Cost | Quality | Privacy | Reliability |
+|----------|------|---------|---------|-------------|
+| Azure Speech (old) | $0.01/min | ⭐⭐⭐⭐ | Cloud | Depends on Azure |
+| **Whisper (new)** | **FREE** | ⭐⭐⭐⭐⭐ | **Local** | **Always works** |
+| Gemini API (old) | Free tier limits | ⭐⭐⭐⭐ | Cloud | Rate limited |
+| **Browser LLM (new)** | **FREE** | ⭐⭐⭐⭐⭐ | Semi-local | **Stable** |
+
+**Savings:** ~$50-100/month compared to API-based solutions
+
+## 🛠️ Building for Windows
+
+### Via GitHub Actions (Recommended for Private Repos)
+
+1. Push to private repository
+2. Go to Actions → "Build Windows Executable"
+3. Download artifact from `dist/*.exe`
+
+The workflow is optimized for GitHub Actions free tier:
+- Caches dependencies to save time
+- Only builds on private repos or manual trigger
+- 14-day artifact retention
+
+### Local Build
+
 ```bash
-rm -rf node_modules dist
-npm install
-npm run build
+npm run build:win
 ```
 
-### Essential Setup
-1. **Azure Speech** (for voice commands)
-   - Get free key from [Azure Portal](https://azure.microsoft.com/en-us/free/students)
-   - Add to `.env`: `AZURE_SPEECH_KEY=your_key`
+Output: `dist/Vysper Setup x.x.x.exe`
 
-2. **Google Gemini AI** (for intelligent responses)
-   - Get API key from [Google AI Studio](https://makersuite.google.com/app/apikey)
-   - Configure in app: Press `Alt+G`
+## 🔒 Privacy & Security
 
-##  📢 🎓 Students gets $100 free credits Azure, and Free Speech To Text for 5 hours of audio
+- **Whisper STT**: Completely local, offline processing
+- **Local LLM**: Only localhost communication, no internet
+- **Browser LLM**: Requests go only to your chosen free platform
+- **No API Keys**: Nothing to configure or pay for
 
-### Environment File
-Create `.env`:
+## 💡 Tips for Interviews
+
+1. **Test beforehand** - Run through the entire flow at least once
+2. **Speak clearly** - Whisper works best with clear pronunciation
+3. **Ask specific questions** - "How does async/await work in Python?" vs "Tell me about asynchrony"
+4. **Position windows strategically** - Place response window outside screen share area
+5. **Use technical English terms** - Keep technical terms in English even in Russian questions
+
+## 📦 Tech Stack
+
+- **Electron** - Cross-platform desktop app
+- **Faster-Whisper** - Local speech-to-text
+- **LM Studio** - Local LLM server
+- **Puppeteer** - Browser automation
+- **Node.js** - Backend logic
+- **Qwen2.5** - Recommended local model
+
+## 🆘 Troubleshooting
+
+### Whisper not working
 ```bash
-AZURE_SPEECH_KEY=your_azure_speech_key
-AZURE_SPEECH_REGION=your_region
-GEMINI_API_KEY=your_gemini_api_key
+python --version
+pip list | grep faster-whisper
 ```
 
-## ⌨️ Essential Shortcuts
+### LM Studio not connecting
+1. Ensure server is running (green "Start Server" button)
+2. Check: http://localhost:1234/v1/models
+3. Update endpoint in settings if using custom port
 
-### Core Functions
-| Shortcut | Action |
-|----------|--------|
-| `Cmd + Shift + S` | Screenshot + AI Analysis |
-| `Alt/Option + R` | Voice Recording Toggle |
-| `Cmd + Shift + \` | Show/Hide All Windows |
-| `Alt + A` | Toggle Interactive Mode |
+### Browser LLM failing
+1. Try different platform (huggingface → perplexity)
+2. Some platforms require login - sign in beforehand
+3. Disable headless mode in settings for debugging
 
-### Navigation
-| Shortcut | Action |
-|----------|--------|
-| `Cmd + Shift + C` | Chat Window |
-| `Cmd + Arrow Up/Down` | Skills Selection (only if Interactive mode is on) |
-| `Cmd + ,` | Settings |
+## 📄 License
 
-### Session Management
-| Shortcut | Action |
-|----------|--------|
-| `Cmd+Shift+\` | Clear Session Memory |
+MIT License - see [LICENSE](./LICENSE) file for details.
 
-### Important Interaction Usage Tip 
-* Enable **Interaction Mode** to scroll, click, or select inside windows.
-* Use `Cmd+Up/Down` (in Interaction Mode) to switch skills quickly.
-* Click thorugh screen works only when interaction mode is disabled
-* In **Stealth Mode**, windows are invisible to screen share & mouse.
+## 🙏 Acknowledgments
 
-## 🔧 Key Features
+- [OpenAI Whisper](https://github.com/openai/whisper) - Speech recognition
+- [Faster-Whisper](https://github.com/guillaumekln/faster-whisper) - Optimized inference
+- [LM Studio](https://lmstudio.ai/) - Local LLM hosting
+- [Puppeteer](https://pptr.dev/) - Browser automation
+- [HuggingFace](https://huggingface.co/chat) - Free LLM platform
 
-### Stealth Technology
-- **Invisible to Screen Sharing** - Completely hidden from Zoom, Teams, Meet
-- **Process Disguise** - Appears as "Vysper" in system monitors
-- **Click-through Mode** - Windows become transparent to mouse clicks
-- **No Screen Recording Detection** - Undetectable by recording software
+---
 
-### AI-Powered Analysis
-- **Screenshot OCR** - Extract and analyze text from any screen content
-- **Voice Commands** - Speak questions and get instant AI responses
-- **Context-Aware** - Remembers conversation history for better responses
-- **Multi-Format Output** - Clean text and code blocks with syntax highlighting
-
-### Interview-Specific Intelligence
-- **Problem Recognition** - Automatically detects interview question types
-- **Step-by-Step Solutions** - Detailed explanations with best practices
-- **Code Examples** - Multi-language implementations with optimizations
-
-## 💡 Pro Tips
-
-### During Technical Interviews
-1. **Position Windows**: Place Vysper windows in screen corners before sharing
-2. **Use Voice Mode**: Whisper questions during "thinking time"
-3. **Screenshot Problems**: Capture coding challenges for instant solutions
-4. **Check Solutions**: Verify your approach with AI before implementing
-
-### For System Design
-1. **Capture Requirements**: Screenshot or voice record the problem statement
-2. **Get Frameworks**: Ask for architectural patterns and trade-offs
-3. **Verify Scalability**: Double-check your design decisions
-
-### Behavioral Questions
-1. **STAR Method**: Get structured response frameworks
-2. **Industry Examples**: Request relevant scenarios for your field
-3. **Follow-up Prep**: Prepare for common follow-up questions
-
-## Important Technical Requirements (MUST INSTALL Before Running)
-- **Node.js** 16+
-- **Tesseract OCR** (`brew install tesseract`)
-- **Audio Tool** (`brew install sox`)
-- **Azure Speech Services** (Free tier available)
-- **Google Gemini API** (Free quota included)
-
-## 🚀 Advanced Usage
-
-### Session Memory
-The app remembers your interview context across multiple questions:
-
-## 🤝 Contributing
-
-**Contribute to make Vysper the ultimate interview companion, not a cheating tool!**
-
-### Priority Areas
-- **New Interview Skills** - Add specialized domains (Finance, Marketing, etc.)
-- **Language Support** - Expand beyond English for global users
-- **Platform Extensions** - Windows and Linux compatibility
-- **LLM Improvements** - Multiple LLM Model selections for the response
-- **UI/UX Improvements** - Enhanced interface and user experience
-
-### How to Contribute
-1. **Fork the repository**
-2. **Star the project** if you find it useful
-3. **Report issues** for bugs or feature requests
-4. **Submit pull requests** for improvements
-5. **Improve documentation** and add examples
-6. **Share your success stories**
-
-⭐ **Star this repo** if Vysper helped you ace your interviews or you vibed with it!
+**Good luck with your interviews!** 🍀

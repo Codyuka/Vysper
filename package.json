@@ -1,12 +1,15 @@
 {
   "name": "Vysper",
   "version": "1.0.0",
-  "description": "Professional Interview Assistant with Invisible Screen Overlay",
+  "description": "Professional Interview Assistant with Invisible Screen Overlay - Local STT & Browser LLM Edition",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
     "dev": "electron . --no-sandbox --disable-gpu",
     "test-speech": "node test-azure-speech.js",
+    "test-whisper": "node test-whisper-service.js",
+    "install-whisper": "pip install faster-whisper sounddevice webrtcvad numpy",
+    "install-browser": "npx puppeteer browsers install chrome",
     "build": "electron-builder",
     "build:mac": "electron-builder --mac",
     "build:win": "electron-builder --win",
@@ -28,6 +31,7 @@
     "marked": "^15.0.12",
     "microsoft-cognitiveservices-speech-sdk": "^1.40.0",
     "node-record-lpcm16": "^1.0.1",
+    "puppeteer": "^22.0.0",
     "tesseract.js": "^6.0.1",
     "winston": "^3.17.0",
     "winston-daily-rotate-file": "^4.7.1"

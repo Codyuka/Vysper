@@ -69,6 +69,28 @@ document.addEventListener('DOMContentLoaded', () => {
         if (settings.codingLanguage && codingLanguageSelect) codingLanguageSelect.value = settings.codingLanguage;
         if (settings.activeSkill && activeSkillSelect) activeSkillSelect.value = settings.activeSkill;
         
+        // Local LLM settings
+        if (localLLMEndpointInput && settings.localLLMEndpoint) localLLMEndpointInput.value = settings.localLLMEndpoint;
+        if (localLLMModelInput && settings.localLLMModel) localLLMModelInput.value = settings.localLLMModel;
+        
+        // Browser LLM settings
+        if (browserLLMPlatformSelect && settings.browserLLMPlatform) {
+            browserLLMPlatformSelect.value = settings.browserLLMPlatform;
+            // Show/hide custom URL input
+            if (customUrlItem) {
+                customUrlItem.style.display = settings.browserLLMPlatform === 'custom' ? 'flex' : 'none';
+            }
+        }
+        if (browserLLMCustomUrlInput && settings.browserLLMCustomUrl) browserLLMCustomUrlInput.value = settings.browserLLMCustomUrl;
+        if (browserLLMHeadlessCheckbox && settings.browserLLMHeadless !== undefined) {
+            browserLLMHeadlessCheckbox.checked = settings.browserLLMHeadless;
+        }
+        
+        // Whisper settings
+        if (whisperModelSelect && settings.whisperModel) whisperModelSelect.value = settings.whisperModel;
+        if (whisperLanguageSelect && settings.whisperLanguage) whisperLanguageSelect.value = settings.whisperLanguage;
+        if (whisperDeviceSelect && settings.whisperDevice) whisperDeviceSelect.value = settings.whisperDevice;
+        
         // Handle icon selection
         const selectedIcon = settings.selectedIcon || settings.appIcon;
         if (selectedIcon && iconGrid) {
@@ -105,15 +127,57 @@ document.addEventListener('DOMContentLoaded', () => {
         if (codingLanguageSelect) settings.codingLanguage = codingLanguageSelect.value;
         if (activeSkillSelect) settings.activeSkill = activeSkillSelect.value;
         
+        // Local LLM settings
+        if (localLLMEndpointInput) settings.localLLMEndpoint = localLLMEndpointInput.value;
+        if (localLLMModelInput) settings.localLLMModel = localLLMModelInput.value;
+        
+        // Browser LLM settings
+        if (browserLLMPlatformSelect) settings.browserLLMPlatform = browserLLMPlatformSelect.value;
+        if (browserLLMCustomUrlInput) settings.browserLLMCustomUrl = browserLLMCustomUrlInput.value;
+        if (browserLLMHeadlessCheckbox) settings.browserLLMHeadless = browserLLMHeadlessCheckbox.checked;
+        
+        // Whisper settings
+        if (whisperModelSelect) settings.whisperModel = whisperModelSelect.value;
+        if (whisperLanguageSelect) settings.whisperLanguage = whisperLanguageSelect.value;
+        if (whisperDeviceSelect) settings.whisperDevice = whisperDeviceSelect.value;
+        
         window.api.send('save-settings', settings);
     };
+
+    // Get DOM elements for new settings
+    const localLLMEndpointInput = document.getElementById('localLLMEndpoint');
+    const localLLMModelInput = document.getElementById('localLLMModel');
+    const checkLocalLLMBtn = document.getElementById('checkLocalLLMBtn');
+    const localLLMStatus = document.getElementById('localLLMStatus');
+    
+    const browserLLMPlatformSelect = document.getElementById('browserLLMPlatform');
+    const browserLLMCustomUrlInput = document.getElementById('browserLLMCustomUrl');
+    const customUrlItem = document.getElementById('customUrlItem');
+    const browserLLMHeadlessCheckbox = document.getElementById('browserLLMHeadless');
+    
+    const whisperModelSelect = document.getElementById('whisperModel');
+    const whisperLanguageSelect = document.getElementById('whisperLanguage');
+    const whisperDeviceSelect = document.getElementById('whisperDevice');
+
+    // Show/hide custom URL input based on platform selection
+    if (browserLLMPlatformSelect) {
+        browserLLMPlatformSelect.addEventListener('change', (e) => {
+            if (customUrlItem) {
+                customUrlItem.style.display = e.target.value === 'custom' ? 'flex' : 'none';
+            }
+            saveSettings();
+        });
+    }
 
     // Add event listeners for all inputs
     const inputs = [
         azureKeyInput,
         azureRegionInput,
         geminiKeyInput,
-        windowGapInput
+        windowGapInput,
+        localLLMEndpointInput,
+        localLLMModelInput,
+        browserLLMCustomUrlInput
     ];
 
     inputs.forEach(input => {
@@ -122,6 +186,60 @@ document.addEventListener('DOMContentLoaded', () => {
             input.addEventListener('blur', saveSettings);
         }
     });
+
+    // Add listeners for select dropdowns
+    const selects = [
+        codingLanguageSelect,
+        activeSkillSelect,
+        whisperModelSelect,
+        whisperLanguageSelect,
+        whisperDeviceSelect
+    ];
+
+    selects.forEach(select => {
+        if (select) {
+            select.addEventListener('change', saveSettings);
+        }
+    });
+
+    // Checkbox listener
+    if (browserLLMHeadlessCheckbox) {
+        browserLLMHeadlessCheckbox.addEventListener('change', saveSettings);
+    }
+
+    // Check Local LLM connection button
+    if (checkLocalLLMBtn && localLLMStatus) {
+        checkLocalLLMBtn.addEventListener('click', async () => {
+            try {
+                localLLMStatus.textContent = 'Checking...';
+                localLLMStatus.style.color = 'rgba(255, 255, 255, 0.6)';
+                
+                const endpoint = localLLMEndpointInput?.value || 'http://localhost:1234/v1';
+                const response = await fetch(`${endpoint}/models`);
+                
+                if (response.ok) {
+                    localLLMStatus.textContent = '✅ Connected';
+                    localLLMStatus.style.color = 'rgba(76, 175, 80, 1)';
+                    
+                    // Try to get model list
+                    const data = await response.json();
+                    if (data.data && data.data.length > 0) {
+                        const modelName = data.data[0].id;
+                        if (localLLMModelInput && !localLLMModelInput.value) {
+                            localLLMModelInput.value = modelName;
+                            localLLMModelInput.placeholder = modelName;
+                        }
+                    }
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                localLLMStatus.textContent = '❌ Not connected';
+                localLLMStatus.style.color = 'rgba(244, 67, 54, 1)';
+                console.error('Local LLM check failed:', error);
+            }
+        });
+    }
 
     // Language selection handler
     if (codingLanguageSelect) {
