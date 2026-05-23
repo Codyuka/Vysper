@@ -1,5 +1,8 @@
 name: Fix package-lock.json
 
+permissions:
+  contents: write
+
 on:
   workflow_dispatch:
 
