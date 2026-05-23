@@ -54,7 +54,30 @@ class ConfigManager {
           enableDictation: true,
           enableAudioLogging: false,
           outputFormat: 'detailed'
+        },
+        whisper: {
+          model: 'large-v3',
+          language: 'auto',
+          device: 'cpu',
+          computeType: 'int8'
         }
+      },
+
+      localLLM: {
+        endpoint: 'http://localhost:1234/v1',
+        model: '',
+        timeout: 10000,
+        maxTokens: 512,
+        temperature: 0.3
+      },
+
+      browserLLM: {
+        model: 'huggingface',
+        headless: true,
+        autoClear: true,
+        timeout: 60000,
+        platform: 'huggingface',
+        customUrl: ''
       },
 
       session: {

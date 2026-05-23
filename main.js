@@ -950,6 +950,20 @@ class ApplicationController {
       activeSkill: this.activeSkill || "dsa",
       appIcon: this.appIcon || "terminal",
       selectedIcon: this.appIcon || "terminal",
+      
+      // Local LLM settings
+      localLLMEndpoint: config.get('localLLM.endpoint') || 'http://localhost:1234/v1',
+      localLLMModel: config.get('localLLM.model') || '',
+      
+      // Browser LLM settings
+      browserLLMPlatform: config.get('browserLLM.platform') || 'huggingface',
+      browserLLMCustomUrl: config.get('browserLLM.customUrl') || '',
+      browserLLMHeadless: config.get('browserLLM.headless') !== false,
+      
+      // Whisper settings
+      whisperModel: config.get('speech.whisper.model') || 'large-v3',
+      whisperLanguage: config.get('speech.whisper.language') || 'auto',
+      whisperDevice: config.get('speech.whisper.device') || 'cpu'
     };
   }
 
@@ -975,6 +989,36 @@ class ApplicationController {
         this.appIcon = settings.selectedIcon;
         // Immediately update the app icon
         this.updateAppIcon(settings.selectedIcon);
+      }
+
+      // Update Local LLM settings in config
+      if (settings.localLLMEndpoint) {
+        config.set('localLLM.endpoint', settings.localLLMEndpoint);
+      }
+      if (settings.localLLMModel !== undefined) {
+        config.set('localLLM.model', settings.localLLMModel);
+      }
+      
+      // Update Browser LLM settings in config
+      if (settings.browserLLMPlatform) {
+        config.set('browserLLM.platform', settings.browserLLMPlatform);
+      }
+      if (settings.browserLLMCustomUrl !== undefined) {
+        config.set('browserLLM.customUrl', settings.browserLLMCustomUrl);
+      }
+      if (settings.browserLLMHeadless !== undefined) {
+        config.set('browserLLM.headless', settings.browserLLMHeadless);
+      }
+      
+      // Update Whisper settings in config
+      if (settings.whisperModel) {
+        config.set('speech.whisper.model', settings.whisperModel);
+      }
+      if (settings.whisperLanguage) {
+        config.set('speech.whisper.language', settings.whisperLanguage);
+      }
+      if (settings.whisperDevice) {
+        config.set('speech.whisper.device', settings.whisperDevice);
       }
 
       // Persist settings to file or config
